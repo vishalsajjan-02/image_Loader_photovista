@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPhotos } from '../redux/feedSlice';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import "../styles.css"; // Ensure styles are linked
+import "../styles.css"; 
 
 const Feed = () => {
     const dispatch = useDispatch();

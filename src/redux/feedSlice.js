@@ -1,14 +1,14 @@
 import { createSlice, createAsyncThunk, configureStore } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-// Fetch random images instead of paginated photos
+
 export const fetchPhotos = createAsyncThunk('feed/fetchPhotos', async () => {
     const API_KEY = process.env.REACT_APP_UNSPLASH_ACCESS_KEY;
     const response = await axios.get(`https://api.unsplash.com/photos/random?count=10&client_id=${API_KEY}`);
-    return response.data; // Returns an array of 10 new images
+    return response.data; 
 });
 
-// Redux slice
+
 const feedSlice = createSlice({
     name: 'feed',
     initialState: { photos: [], status: 'idle', error: null },
@@ -18,7 +18,7 @@ const feedSlice = createSlice({
             .addCase(fetchPhotos.pending, (state) => { state.status = 'loading'; })
             .addCase(fetchPhotos.fulfilled, (state, action) => {
                 state.status = 'succeeded';
-                state.photos = [...state.photos, ...action.payload]; // ✅ Append new images
+                state.photos = [...state.photos, ...action.payload]; 
             })
             .addCase(fetchPhotos.rejected, (state, action) => {
                 state.status = 'failed';
@@ -27,7 +27,7 @@ const feedSlice = createSlice({
     },
 });
 
-// Create and export store
+
 export const store = configureStore({
     reducer: {
         feed: feedSlice.reducer,
