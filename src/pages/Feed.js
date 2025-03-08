@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPhotos } from '../redux/feedSlice';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import "../styles.css"; 
+import "../styles.css";
 
 const Feed = () => {
     const dispatch = useDispatch();
     const { photos, status } = useSelector((state) => state.feed);
     const [allPhotos, setAllPhotos] = useState([]);
+    const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
 
     useEffect(() => {
         if (photos.length === 0) {
@@ -21,9 +22,23 @@ const Feed = () => {
         }
     }, [photos]);
 
+    useEffect(() => {
+        document.body.className = theme;
+        localStorage.setItem('theme', theme);
+    }, [theme]);
+
+    const toggleTheme = () => {
+        setTheme(theme === 'light' ? 'dark' : 'light');
+    };
+
     return (
-        <div className="container">
-            <h1 className="title">Infinite Image Feed</h1>
+        <div className={`container ${theme}`}>
+            <div className="header">
+                <h1 className="title">PhotoVista</h1>
+                <button className="theme-toggle-btn" onClick={toggleTheme}>
+                    {theme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode'}
+                </button>
+            </div>
 
             <InfiniteScroll
                 dataLength={allPhotos.length}

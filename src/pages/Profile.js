@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import "../styles.css"; 
+import "../styles.css";
 
 const Profile = () => {
     const { username } = useParams();
@@ -10,9 +10,9 @@ const Profile = () => {
     const [photos, setPhotos] = useState([]);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
-    const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light'); 
+    const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+    const [isGridView, setIsGridView] = useState(true);
 
-    
     const toggleTheme = () => {
         const newTheme = theme === 'light' ? 'dark' : 'light';
         setTheme(newTheme);
@@ -20,10 +20,14 @@ const Profile = () => {
     };
 
     useEffect(() => {
-        document.body.className = theme; 
+        document.body.className = theme;
     }, [theme]);
 
- 
+
+    const toggleView = () => {
+        setIsGridView(!isGridView);
+    };
+
     const fetchUserPhotos = useCallback(async (pageNumber) => {
         try {
             const API_KEY = process.env.REACT_APP_UNSPLASH_ACCESS_KEY;
@@ -42,7 +46,7 @@ const Profile = () => {
         }
     }, [username]);
 
- 
+
     const fetchUserProfile = async () => {
         try {
             const API_KEY = process.env.REACT_APP_UNSPLASH_ACCESS_KEY;
@@ -72,9 +76,14 @@ const Profile = () => {
                 <h2>{user.name}</h2>
                 <p>{user.bio || "No bio available"}</p>
                 <p>📷 Total Photos: {user.total_photos}</p>
-                <button className="theme-toggle-btn" onClick={toggleTheme}>
-                    {theme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode'}
-                </button>
+                <div className="buttons">
+                    <button className="theme-toggle-btn" onClick={toggleTheme}>
+                        {theme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode'}
+                    </button>
+                    <button className="view-toggle-btn" onClick={toggleView}>
+                        {isGridView ? '📜 List View' : '🔲 Grid View'}
+                    </button>
+                </div>
             </div>
 
             {/*  Infinite Scroll Component */}
@@ -84,11 +93,13 @@ const Profile = () => {
                 hasMore={hasMore}
                 loader={<p className="text-center">Loading more photos...</p>}
             >
-                <div className="row">
+                <div className={isGridView ? "row grid-view" : "row list-view"}>
                     {photos.map((photo) => (
-                        <div key={photo.id} className="grid-item">
+                        <div key={photo.id} className={`grid-item ${isGridView ? "grid" : "list"}`}>
                             <img src={photo.urls.small} alt={photo.alt_description} />
                             <div className="card-body">
+                                <p className="card-title">📸 {photo.user.name}</p>
+                                <p className="card-text">📍 {photo.user.location || "Unknown"}</p>
                                 <p className="card-text">❤️ {photo.likes} Likes</p>
                                 <a href={photo.urls.full} target="_blank" rel="noopener noreferrer" className="btn">
                                     View Full Image
@@ -103,8 +114,5 @@ const Profile = () => {
 };
 
 export default Profile;
-
-
-
 
 
